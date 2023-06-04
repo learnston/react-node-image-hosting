@@ -17,7 +17,8 @@ const upload = multer({ storage: storage })
 
 app.use(cors())
 
-app.post('/image', upload.single('file'), function (req, res) {
+app.post('/image', upload.array('files', 5), function (req, res) {
+  // The 'files' parameter is the name of the field in the form that accepts multiple files
   res.json({})
 })
 

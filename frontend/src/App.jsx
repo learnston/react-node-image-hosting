@@ -2,12 +2,17 @@ import './App.css'
 import { useState } from 'react'
 
 function App() {
-  const [image, setImage] = useState({ preview: '', data: '' })
+  const [images, setImages] = useState({ previews: [], data: [] })
   const [status, setStatus] = useState('')
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     let formData = new FormData()
-    formData.append('file', image.data)
+
+    for (let i = 0; i < images.data.length; i++) {
+      formData.append('files', images.data[i])
+    }
+
     const response = await fetch('http://localhost:5000/image', {
       method: 'POST',
       body: formData,
@@ -17,17 +22,22 @@ function App() {
   }
 
   const handleFileChange = (e) => {
-    const img = {
-      preview: URL.createObjectURL(e.target.files[0]),
-      data: e.target.files[0],
+    const selectedFiles = Array.from(e.target.files)
+
+    const selectedImages = {
+      previews: selectedFiles.map((file) => URL.createObjectURL(file)),
+      data: selectedFiles,
     }
-    setImage(img)
+
+    setImages(selectedImages)
   }
 
   return (
     <div className="App">
       <h1>Upload to server</h1>
-      {image.preview && <img src={image.preview} width="100" height="100" />}
+      {images.previews && (
+        <img src={images.previews[0]} width="100" height="100" />
+      )}
       <hr></hr>
       <form onSubmit={handleSubmit}>
         <input
